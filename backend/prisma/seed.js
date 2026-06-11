@@ -8,13 +8,12 @@ async function main() {
             email: "admin@gmail.com",
             password: hashedPassword,
             name: "Admin",
+            username: "Admin123",
 
             age: 30,
-            address: "Kerala",
             designation : "Administrator",
 
             spendingLimit: 0,
-            salary: 0,
 
             role: "ADMIN"
         }
