@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 import { generateInvitationToken } from "../utils/generateInvitationToken.js";
 import { generateInvitationLink } from '../utils/generateInvitationLink.js';
+import { sendInvitationEmail } from "../services/emailService.js";
 
 export const createEmp = async(req, res) => {
 
@@ -42,7 +43,7 @@ export const createEmp = async(req, res) => {
             }
         })
 
-        
+        await sendInvitationEmail(email,invitationLink);
 
         return res.status(201).json({
             message: "Employee created succesfully",

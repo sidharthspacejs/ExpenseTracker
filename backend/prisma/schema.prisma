@@ -33,7 +33,7 @@ model User {
 
   isActive Boolean @default(false)
 
-  invitationToken String?
+  invitationToken String? @unique
   invitationExpiry DateTime?
 
   createdAt DateTime @default(now())

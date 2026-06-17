@@ -1,0 +1,159 @@
+import prisma from "../config/prisma.js"
+import bcrypt from "bcryptjs"
+
+export const login = async (req,res) => {
+
+
+    try {
+        const { email, password } = req.body;
+        const user = await prisma.user.findUnique({
+            where:{
+                email
+            }
+        });
+
+        if(!user) {
+            return res.status(400).json({
+                message: "User not found"
+            });
+        }
+
+        const isMatch = await bcrypt.compare(
+            password, user.password
+        );
+
+        if(!isMatch){
+            return res.status(401).json({
+                message: "Invalid Password"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Login successful",
+
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role
+            }
+        })
+    }
+
+    catch(error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+}
+
+export const accountSetupPage = async(req,res) => {    //account setup page
+
+
+    const token = req.query.token;
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                invitationToken: token
+            }
+        });
+
+
+        if(!user) {
+            return res.status(404).json({
+                message: "Invalid invitation link"
+            })
+        }
+
+        if(user.invitationExpiry < new Date()) {
+            return res.status(400).json({
+                message: "Invitation link expired"
+            })
+        }
+
+        return res.send(`
+
+    <h1>Account Setup</h1>
+
+    <form method="POST" action="/auth/account-setup?token=${token}">
+        <input
+            type="text"
+            name="username"
+            placeholder="Username"
+        />
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Password"
+        />
+
+        <button type="submit">
+            Create Account
+        </button>
+    </form>
+`);
+
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message : "Internal server error occured"
+        });
+    }
+}
+
+export const accountSetup = async(req,res) => {
+
+    const token = req.query.token;
+    const {username, password} = req.body;
+
+    try {
+
+        const user = await prisma.user.findUnique({
+            where: {
+                invitationToken : token
+            }
+        })
+
+        if(!user) {
+            return res.status(404).json({
+                message: "Invalid Invitation Link"
+            });
+        }
+
+        if(user.invitationExpiry < new Date()) {
+            return res.status(400).json({
+                message: "Invitation link expired"
+            })
+        }
+
+        await prisma.user.update({
+            where: {
+                id: user.id
+            },
+
+            data: {
+                username: username,
+                password: await bcrypt.hash(password,10),
+                isActive: true,
+                invitationToken: null,
+                invitationExpiry: null
+            }
+        });
+
+        return res.status(200).json({
+            message: "Account created successfully"
+        })
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        })
+    }
+}
