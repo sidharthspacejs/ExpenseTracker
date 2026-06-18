@@ -1,14 +1,15 @@
-import prisma from "../config/prisma.js"
-import bcrypt from "bcryptjs"
+import prisma from "../config/prisma.js";
+import bcrypt from "bcryptjs";
+import jwt from 'jsonwebtoken';
 
 export const login = async (req,res) => {
 
 
     try {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
         const user = await prisma.user.findUnique({
             where:{
-                email
+                username
             }
         });
 
@@ -27,6 +28,20 @@ export const login = async (req,res) => {
                 message: "Invalid Password"
             });
         }
+
+        const token =  jwt.sign(
+            {
+                id: user.id,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "7d"
+            }
+        );
+        return res.status(200).json({
+            token
+        });
 
         return res.status(200).json({
             message: "Login successful",
