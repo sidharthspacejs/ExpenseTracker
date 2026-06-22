@@ -4,9 +4,16 @@ import jwt from 'jsonwebtoken';
 
 export const login = async (req,res) => {
 
+    const { username, password } = req.body;
+
+    if(!username || !password) {
+        return res.status(400).json({
+            message: "All fields are required"
+        })
+    }
 
     try {
-        const { username, password } = req.body;
+
         const user = await prisma.user.findUnique({
             where:{
                 username
