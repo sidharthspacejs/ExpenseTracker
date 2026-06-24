@@ -136,6 +136,11 @@ export const updateExpense = async(req,res) => {
             message: "Internal Server Error"
         });
     }
+}
 
+export const deleteExpense = async(req,res) => {
 
+    const id = Number(req.params.id);
+
+    
 }
