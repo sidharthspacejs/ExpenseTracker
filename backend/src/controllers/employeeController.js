@@ -140,7 +140,42 @@ export const updateExpense = async(req,res) => {
 
 export const deleteExpense = async(req,res) => {
 
-    const id = Number(req.params.id);
+    try {
+        
+     const id = Number(req.params.id);
 
-    
+     const expense = await prisma.expense.findUnique({
+         where: {
+             id
+         }
+     });
+
+     if(!expense) {
+         return res.status(404).json({
+             message: "Expense not found"
+         });
+     }
+
+     if(expense.userId !== req.user.id) {
+        return res.status(403).json({
+            message: "Access Denied"
+        });
+     }
+
+     await prisma.expense.delete({
+         where : {
+             id
+         }
+     });
+
+     return res.status(200).json({
+        message: "Expense deleted successfully"
+     });
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
 }
