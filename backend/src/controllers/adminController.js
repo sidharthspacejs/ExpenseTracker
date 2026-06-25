@@ -98,6 +98,56 @@ export const deleteEmployee = async(req,res) => {
     }
 }
 
+export const viewAllEmployees = async(req,res) => {
+
+    try {
+        
+        const employees = await prisma.user.findMany({
+            where: {
+                role: "EMPLOYEE"
+            },
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                role: true,
+                designation: true,
+                expenses: {
+                    select: {
+                        amount: true
+                    }
+                }
+            }
+        });
+        const result = employees.map(employee => {
+
+            const totalExpense = employee.expenses.reduce((sum,expense) => sum + expense.amount,0);
+
+            return {
+                id: employee.id,
+                name: employee.name,
+                username: employee.username,
+                role: employee.role,
+                designation: employee.designation,
+                expenseCount: employee.expenses.length,
+                totalExpense
+            }
+        });
+
+        return res.status(200).json({
+            employees: result
+        });
+
+    } catch (error) {
+        
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
 export const viewAllExpenses = async(req,res) => {
 
     try {
