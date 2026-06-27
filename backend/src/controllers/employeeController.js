@@ -179,3 +179,45 @@ export const deleteExpense = async(req,res) => {
         });
     }
 }
+
+export const dashboard = async(req, res) => {
+
+    const period = req.query.period || "month";
+
+    try {
+        
+        const endDate = new Date();
+        const startDate = new Date(endDate);
+
+        if(period == "today") {
+
+            startDate.setHours(0,0,0,0);
+
+        }
+
+        if(period == "week") {
+
+        }
+
+        const expenses = await prisma.expense.findMany({
+            where: {
+
+                userId: req.user.id,
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                }
+
+            },
+
+        })
+
+    } catch (error) {
+        
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
