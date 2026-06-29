@@ -195,8 +195,29 @@ export const dashboard = async(req, res) => {
 
         }
 
-        if(period == "week") {
+        else if(period == "last7") {
 
+            startDate.setDate(startDate.getDate() - 7);
+
+        }
+
+        else if(period == "month") {
+
+            startDate.setDate(1);
+            startDate.setHours(0,0,0,0);
+        }
+
+        else if(period == "year") {
+            
+            startDate.setMonth(0);
+            startDate.setDate(1);
+            startDate.setHours(0,0,0,0);
+        }
+
+        else {
+            return res.status(400).json({
+                message: "Invalid Period"
+            });
         }
 
         const expenses = await prisma.expense.findMany({
@@ -206,9 +227,10 @@ export const dashboard = async(req, res) => {
                 createdAt: {
                     gte: startDate,
                     lte: endDate
-                }
+                },
 
             },
+
 
         })
 
