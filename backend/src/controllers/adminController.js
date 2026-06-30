@@ -65,6 +65,12 @@ export const deleteEmployee = async(req,res) => {
     const id = Number(req.params.id);
     
     try {
+
+        if(deleteEmployee.role == "ADMIN") {
+            return res.status(403).json({
+                message: "Only employees can be deleted"
+            })
+        }
         
         const deleteEmployee = await prisma.user.delete({
             where: {
@@ -78,11 +84,6 @@ export const deleteEmployee = async(req,res) => {
             });
         }
 
-        if(deleteEmployee.role == "ADMIN") {
-            return res.status(403).json({
-                message: "Only employees can be deleted"
-            })
-        }
 
         return res.status(200).json({
             message: "Employee removed successfully",
