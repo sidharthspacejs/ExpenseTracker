@@ -220,6 +220,8 @@ export const dashboard = async(req, res) => {
             });
         }
 
+        
+
         const expenses = await prisma.expense.findMany({
             where: {
 
