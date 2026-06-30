@@ -220,7 +220,7 @@ export const dashboard = async(req, res) => {
             });
         }
 
-        
+
 
         const expenses = await prisma.expense.findMany({
             where: {
@@ -229,12 +229,49 @@ export const dashboard = async(req, res) => {
                 createdAt: {
                     gte: startDate,
                     lte: endDate
-                },
-
+                }
             },
+            select: {
+                amount: true,
+                category: true
+            }
+        });
 
+        if(expenses.length === 0) {
+            return res.status(200).json({
+                period,
+                expenseCount: 0,
+                totalExpense: 0,
+                averageExpense: 0,
+                highestExpense: 0,
+                lowestExpense: 0
+            });
+        }
 
-        })
+        const expenseCount = expenses.length;
+
+        const totalExpense = expenses.reduce((total,expense) => {
+            return total + expense.amount
+        });
+
+        const averageExpense = expenseCount === 0 ? 0 : totalExpense / expenseCount;
+
+        const highestExpense = expenses.reduce((highest, expense) => {
+            return expense.amount > highest ? expense.amount : highest;
+        },0);
+
+        const lowestExpense = expenses.reduce((lowest, expense) => {
+            return expense.amount < lowest ? expense.amount : lowest;
+        },expense[0].amount);
+
+        return res.status(200).json({
+            period,
+            expenseCount,
+            totalExpense,
+            averageExpense,
+            highestExpense,
+            lowestExpense
+        });
 
     } catch (error) {
         
