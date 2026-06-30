@@ -18,18 +18,40 @@ enum Role {
 
 model User {
   id Int @id @default(autoincrement())
+
   email String @unique
-  password String 
+  password String?
+  username String? @unique
 
   name String 
-  age Int
-  address String 
+  age Int?
   designation String
 
-  spendingLimit Float
-  salary Float
+  spendingLimit Float?
 
   role Role @default(EMPLOYEE)
 
+  isActive Boolean @default(false)
+
+  invitationToken String? @unique
+  invitationExpiry DateTime?
+
   createdAt DateTime @default(now())
+
+  expenses Expense[]
+}
+
+model Expense {
+  id Int @id @default(autoincrement())
+
+  amount Float
+  description String?
+  category String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 }

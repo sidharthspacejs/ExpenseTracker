@@ -1,61 +1,247 @@
-import prisma from "../prisma/client.js";
+import prisma from '../config/prisma.js'
+import { expenseSchema } from '../../validations/expenseValidations.js';
 
-export const getAllEmployees = async (req, res) => {
-    try {
-        const employees = await prisma.employee.findMany();
-        res.status(200).json(employees);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch employees" });
-    }   
-};
 
-export const getEmployeeById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const employee = await prisma.employee.findUnique({
-            where: { id: parseInt(id) },
+export const createExpense = async(req,res) => {
+
+    const result = expenseSchema.safeParse(req.body);  //Input Validation
+
+    if(!result.success) {
+        return res.status(400).json({
+            errors: result.error.issues
         });
-        if (!employee) {
-            return res.status(404).json({ error: "Employee not found" });
+    }
+
+    const {amount, description, category} = result.data; 
+
+
+    try {
+        
+        const expense = await prisma.expense.create({
+            data: {
+                amount,
+                description,
+                category,
+                userId: req.user.id
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        role: true
+                    }
+                }
+            }
+        });
+
+        return res.status(201).json({
+            message: "Expense created successfully",
+            expense
+        });
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+}
+
+export const viewMyExpense = async(req,res) => {
+
+    try {
+        const expenses = await prisma.expense.findMany({
+            where: {
+                userId: req.user.id
+            },
+            include: {
+                user: {
+                    select: {
+                        name: true,
+                        role: true
+                    }
+                }
+            }
+        });
+
+        return res.status(200).json({
+            expenses
+        });
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+}
+
+
+export const updateExpense = async(req,res) => {
+
+    const id = Number(req.params.id);
+
+    const result = expenseSchema.safeParse(req.body);
+
+    if(!result.success) {
+        return res.status(400).json({
+            errors: result.error.issues
+        });
+    }
+
+    const {amount, description, category} = result.data;
+
+    try {
+        
+        const expense = await prisma.expense.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if(!expense) {
+            return res.status(404).json({
+                message: "Expense not found"
+            });
         }
-        res.status(200).json(employee);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch employee" });
-    }
-}; 
-export const createEmployee = async (req, res) => {
-    try {
-        const { name, email, department, expense } = req.body;
-        const Employee = await prisma.employee.create({
-            data: { name, email, department, expense}
-        });
-        res.status(201).json(Employee);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to create employee" });
-    }
-};
-export const updateEmployee = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, email, department, expense } = req.body;
-        const updatedEmployee = await prisma.employee.update({
-            where: { id: parseInt(id) },
-            data: { name, email, department, expense }
-        });
-        res.status(200).json(updatedEmployee);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to update employee" });
-    }
-};
-export const deleteEmployee = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await prisma.employee.delete({
-            where: { id: parseInt(id) }
-        });
-        res.status(200).json({ message: "Employee deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to delete employee" });
-    }
-};  
 
+        if(expense.userId !== req.user.id) {
+            return res.status(403).json({
+                message: "Access Denied"
+            });
+        }
+
+        const updated = await prisma.expense.update({
+            where: {
+                id
+            },
+            data: {
+                amount,
+                description,
+                category
+            }
+        });
+
+        return res.status(200).json({
+            message: "Expense updated successfully",
+            updated
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
+}
+
+export const deleteExpense = async(req,res) => {
+
+    try {
+        
+     const id = Number(req.params.id);
+
+     const expense = await prisma.expense.findUnique({
+         where: {
+             id
+         }
+     });
+
+     if(!expense) {
+         return res.status(404).json({
+             message: "Expense not found"
+         });
+     }
+
+     if(expense.userId !== req.user.id) {
+        return res.status(403).json({
+            message: "Access Denied"
+        });
+     }
+
+     await prisma.expense.delete({
+         where : {
+             id
+         }
+     });
+
+     return res.status(200).json({
+        message: "Expense deleted successfully"
+     });
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+export const dashboard = async(req, res) => {
+
+    const period = req.query.period || "month";
+
+    try {
+        
+        const endDate = new Date();
+        const startDate = new Date(endDate);
+
+        if(period == "today") {
+
+            startDate.setHours(0,0,0,0);
+
+        }
+
+        else if(period == "last7") {
+
+            startDate.setDate(startDate.getDate() - 7);
+
+        }
+
+        else if(period == "month") {
+
+            startDate.setDate(1);
+            startDate.setHours(0,0,0,0);
+        }
+
+        else if(period == "year") {
+            
+            startDate.setMonth(0);
+            startDate.setDate(1);
+            startDate.setHours(0,0,0,0);
+        }
+
+        else {
+            return res.status(400).json({
+                message: "Invalid Period"
+            });
+        }
+
+        
+
+        const expenses = await prisma.expense.findMany({
+            where: {
+
+                userId: req.user.id,
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                },
+
+            },
+
+
+        })
+
+    } catch (error) {
+        
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
