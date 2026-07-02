@@ -209,3 +209,46 @@ export const viewExpenseById = async(req,res) => {
     }
 
 }
+
+export const dashboard = async(req, res) => {
+
+    try {
+
+        const [employeeCount, stats, categorySummary] = await Promise.all([
+
+            prisma.user.count({
+                where: {
+                    role: "EMPLOYEE"
+                }
+            }),
+
+            prisma.expense.aggregate({
+
+                _sum: {
+                    amount: true
+                },
+
+                _avg: {
+                    amount: true
+                },
+
+                _count: {
+                    id: true
+                },
+
+                _max: {
+                    amount: true
+                }
+            }),
+
+        ]);
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message: "internal Server Error"
+        });
+    }
+}

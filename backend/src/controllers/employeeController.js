@@ -252,7 +252,7 @@ export const dashboard = async(req, res) => {
 
         const totalExpense = expenses.reduce((total,expense) => {
             return total + expense.amount
-        });
+        },0);
 
         const averageExpense = expenseCount === 0 ? 0 : totalExpense / expenseCount;
 
@@ -262,7 +262,12 @@ export const dashboard = async(req, res) => {
 
         const lowestExpense = expenses.reduce((lowest, expense) => {
             return expense.amount < lowest ? expense.amount : lowest;
-        },expense[0].amount);
+        },expenses[0].amount);
+
+        const categorySummary = expenses.reduce((summary, expense) => {
+            summary[expense.category] = (summary[expense.category] ?? 0) + expense.amount;
+            return summary;
+        },{});
 
         return res.status(200).json({
             period,
@@ -270,7 +275,8 @@ export const dashboard = async(req, res) => {
             totalExpense,
             averageExpense,
             highestExpense,
-            lowestExpense
+            lowestExpense,
+            categorySummary
         });
 
     } catch (error) {
