@@ -212,17 +212,65 @@ export const viewExpenseById = async(req,res) => {
 
 export const dashboard = async(req, res) => {
 
+    const period = req.query.period || "today";
+
     try {
+
+        const endDate = new Date();
+        const startDate = new Date(endDate);
+        const dateFilter = {
+            createdAt: {
+                gte: startDate,
+                lte: endDate
+            }
+        };
+
+        if(period === "today") {
+
+            startDate.setHours(0,0,0,0);
+
+        }
+
+        else if(period === "last7") {
+            
+            startDate.setDate(startDate.getDate() - 7);
+
+        }
+
+        else if(period === "month") {
+
+            startDate.setDate(1);
+            startDate.setHours(0,0,0,0);
+
+        }
+
+        else if(period === "year") {
+
+            startDate.setHours(0,0,0,0);
+            startDate.setMonth(0);
+            startDate.setDate(1);
+
+        }
+
+        else {
+
+            return res.status(400).json({
+                message: "Invalid Period"
+            });
+        }
 
         const [employeeCount, stats, categorySummary] = await Promise.all([
 
             prisma.user.count({
+
                 where: {
                     role: "EMPLOYEE"
                 }
             }),
 
             prisma.expense.aggregate({
+
+                where: dateFilter,
 
                 _sum: {
                     amount: true
@@ -241,7 +289,34 @@ export const dashboard = async(req, res) => {
                 }
             }),
 
+            prisma.expense.groupBy({
+
+                where: dateFilter,
+
+                by: ["category"],
+
+                _sum: {
+
+                    amount: true
+
+                }
+            })
+
         ]);
+
+        const totalExpense = stats._sum.amount || 0;
+        const averageExpense = stats._avg.amount || 0;
+        const highestExpense = stats._max.amount || 0;
+        const numberOfExpenses = stats._count.id || 0;
+
+        return res.status(200).json({
+            employeeCount,
+            totalExpense,
+            averageExpense,
+            highestExpense,
+            numberOfExpenses,
+            categorySummary
+        });
 
     } catch (error) {
 
