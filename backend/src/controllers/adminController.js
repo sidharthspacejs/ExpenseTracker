@@ -234,6 +234,7 @@ export const dashboard = async(req, res) => {
         else if(period === "last7") {
             
             startDate.setDate(startDate.getDate() - 7);
+            
 
         }
 
