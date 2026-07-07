@@ -1,3 +1,5 @@
+import { ArrowRight } from 'lucide-react'
+
 const LoginForm = () => {
     return (
         <form className="flex flex-col gap-5">
@@ -57,9 +59,9 @@ const LoginForm = () => {
 
             <button 
             type="submit"
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
             >
-                Sign In
+                Sign In <ArrowRight size={18}/>
             </button>
 
         </form>
