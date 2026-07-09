@@ -2,8 +2,8 @@ import { TrendingUp } from "lucide-react";
 
 const MonthlyCard = () => {
   return (
-    <div className="absolute top-50 left-50 z-10">
-      <div className="w-64 bg-white rounded-3xl shadow-xl p-6 rotate-10">
+    <div className="absolute top-50 left-30 z-10">
+      <div className="w-64 bg-white rounded-3xl shadow-xl p-6 -rotate-7">
         <div className="uppercase text-xs tracking-widest text-gray-400 font-semibold">
           THIS MONTH
         </div>
