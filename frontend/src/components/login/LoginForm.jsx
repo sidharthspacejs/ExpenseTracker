@@ -1,13 +1,24 @@
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import Login from "../../api/authApi.js";
+import { login } from "../../api/authApi";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const data = await login(username, password);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <form className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div>
         <label
           htmlFor="username"
