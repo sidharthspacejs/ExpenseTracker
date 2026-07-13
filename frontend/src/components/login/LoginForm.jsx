@@ -1,17 +1,26 @@
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { login } from "../../api/authApi";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const data = await login(username, password);
-      console.log(data);
+      localStorage.setItem("token", data.token);
+
+      const decodedToken = jwtDecode(data.token);
+
+      if (decodedToken.role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else navigate("/employee/dashboard");
     } catch (error) {
       console.error(error);
     }
