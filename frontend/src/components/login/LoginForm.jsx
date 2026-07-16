@@ -3,10 +3,12 @@ import { useState } from "react";
 import { login } from "../../api/authApi";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
