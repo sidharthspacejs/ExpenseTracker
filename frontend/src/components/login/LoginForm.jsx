@@ -1,6 +1,5 @@
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { login } from "../../api/authApi";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -8,19 +7,15 @@ import { useAuth } from "../../hooks/useAuth";
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const data = await login(username, password);
-      localStorage.setItem("token", data.token);
-
-      const decodedToken = jwtDecode(data.token);
-
-      if (decodedToken.role === "ADMIN") {
+      const user = await login(username, password);
+      if (user.role === "ADMIN") {
         navigate("/admin/dashboard");
       } else navigate("/employee/dashboard");
     } catch (error) {
