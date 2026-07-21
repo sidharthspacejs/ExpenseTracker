@@ -263,7 +263,9 @@ export const getCurrentUser = async (req, res) => {
       },
 
       select: {
+        id: true,
         role: true,
+        username: true,
       },
     });
 

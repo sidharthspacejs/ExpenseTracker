@@ -1,12 +1,16 @@
 import { Navigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../hooks/useAuth";
 
 const ProtectedRoute = ({ children, allowedRole }) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/" replace />;
+  const { user } = useAuth();
+  if (!user) {
+    <Navigate to="/" replace />;
   }
+  if (user.role !== allowedRole) {
+    <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;

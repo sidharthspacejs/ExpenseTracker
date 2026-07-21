@@ -1,6 +1,7 @@
 import { useState, createContext, useEffect } from "react";
 import { login as loginApi } from "../api/authApi";
 import { jwtDecode } from "jwt-decode";
+import { getCurrentUser } from "../api/authApi";
 
 export const AuthContext = createContext();
 
@@ -11,26 +12,31 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await loginApi(username, password);
 
-      const decoded = jwtDecode(response.token);
-
-      setUser(decoded);
-
       localStorage.setItem("token", response.token);
 
-      return decoded;
+      const currentUser = await getCurrentUser();
+
+      setUser(currentUser);
+
+      return user;
     } catch (error) {
       throw error;
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const loadUser = async () => {
+      try {
+        const user = await getCurrentUser();
 
-    if (!token) return;
+        setUser(user);
+      } catch (error) {
+        localStorage.removeItem("token");
+        setUser(null);
+      }
+    };
 
-    const decoded = jwtDecode(token);
-
-    console.log(decoded);
+    loadUser();
   }, []);
 
   return (
