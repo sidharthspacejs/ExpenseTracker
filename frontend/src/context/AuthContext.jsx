@@ -14,11 +14,9 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("token", response.token);
 
-      const currentUser = await getCurrentUser();
+      setUser(response.user);
 
-      setUser(currentUser);
-
-      return user;
+      return response.user;
     } catch (error) {
       throw error;
     }

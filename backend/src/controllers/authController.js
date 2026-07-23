@@ -1,101 +1,89 @@
 import prisma from "../config/prisma.js";
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-export const login = async (req,res) => {
+export const login = async (req, res) => {
+  const { username, password } = req.body;
 
-    const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({
+      message: "All fields are required",
+    });
+  }
 
-    if(!username || !password) {
-        return res.status(400).json({
-            message: "All fields are required"
-        })
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
     }
 
-    try {
+    const isMatch = await bcrypt.compare(password, user.password);
 
-        const user = await prisma.user.findUnique({
-            where:{
-                username
-            }
-        });
-
-        if(!user) {
-            return res.status(400).json({
-                message: "User not found"
-            });
-        }
-
-        const isMatch = await bcrypt.compare(
-            password, user.password
-        );
-
-        if(!isMatch){
-            return res.status(401).json({
-                message: "Invalid Password"
-            });
-        }
-
-        const token =  jwt.sign(
-            {
-                id: user.id,
-                role: user.role
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: "7d"
-            }
-        );
-        return res.status(200).json({
-            token
-        });
-
-        return res.status(200).json({
-            message: "Login successful",
-
-            user: {
-                id: user.id,
-                email: user.email,
-                role: user.role
-            }
-        })
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Invalid Password",
+      });
     }
 
-    catch(error) {
-        console.log(error);
+    const token = jwt.sign(
+      {
+        id: user.id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+    return res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.log(error);
 
-        return res.status(500).json({
-            message: "Internal Server Error"
-        });
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export const accountSetupPage = async (req, res) => {
+  //account setup page
+
+  const token = req.query.token;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        invitationToken: token,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Invalid invitation link",
+      });
     }
-}
 
-export const accountSetupPage = async(req,res) => {    //account setup page
+    if (user.invitationExpiry < new Date()) {
+      return res.status(400).json({
+        message: "Invitation link expired",
+      });
+    }
 
-
-    const token = req.query.token;
-
-    try {
-        const user = await prisma.user.findUnique({
-            where: {
-                invitationToken: token
-            }
-        });
-
-
-        if(!user) {
-            return res.status(404).json({
-                message: "Invalid invitation link"
-            })
-        }
-
-        if(user.invitationExpiry < new Date()) {
-            return res.status(400).json({
-                message: "Invitation link expired"
-            })
-        }
-
-        return res.send(`
+    return res.send(`
 
     <h1>Account Setup</h1>
 
@@ -117,65 +105,89 @@ export const accountSetupPage = async(req,res) => {    //account setup page
         </button>
     </form>
 `);
+  } catch (error) {
+    console.log(error);
 
+    return res.status(500).json({
+      message: "Internal server error occured",
+    });
+  }
+};
 
-    } catch (error) {
-        console.log(error);
+export const accountSetup = async (req, res) => {
+  const token = req.query.token;
+  const { username, password } = req.body;
 
-        return res.status(500).json({
-            message : "Internal server error occured"
-        });
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        invitationToken: token,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Invalid Invitation Link",
+      });
     }
-}
 
-export const accountSetup = async(req,res) => {
-
-    const token = req.query.token;
-    const {username, password} = req.body;
-
-    try {
-
-        const user = await prisma.user.findUnique({
-            where: {
-                invitationToken : token
-            }
-        })
-
-        if(!user) {
-            return res.status(404).json({
-                message: "Invalid Invitation Link"
-            });
-        }
-
-        if(user.invitationExpiry < new Date()) {
-            return res.status(400).json({
-                message: "Invitation link expired"
-            })
-        }
-
-        await prisma.user.update({
-            where: {
-                id: user.id
-            },
-
-            data: {
-                username: username,
-                password: await bcrypt.hash(password,10),
-                isActive: true,
-                invitationToken: null,
-                invitationExpiry: null
-            }
-        });
-
-        return res.status(200).json({
-            message: "Account created successfully"
-        })
-
-    } catch (error) {
-        console.log(error);
-
-        return res.status(500).json({
-            message: "Internal server error"
-        })
+    if (user.invitationExpiry < new Date()) {
+      return res.status(400).json({
+        message: "Invitation link expired",
+      });
     }
-}
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+
+      data: {
+        username: username,
+        password: await bcrypt.hash(password, 10),
+        isActive: true,
+        invitationToken: null,
+        invitationExpiry: null,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Account created successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getCurrentUser = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+
+      select: {
+        id: true,
+        role: true,
+        username: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};

@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import EmployeeDashboard from "./pages/employee/Dashboard.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -12,9 +13,23 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
 
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute allowedRole="ADMIN">
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+      <Route
+        path="/employee/dashboard"
+        element={
+          <ProtectedRoute allowedRole="EMPLOYEE">
+            <EmployeeDashboard />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
