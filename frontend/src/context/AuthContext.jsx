@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, isLoading] = useState(true);
 
   const login = async (username, password) => {
     try {
@@ -31,6 +32,8 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         localStorage.removeItem("token");
         setUser(null);
+      } finally {
+        isLoading(false);
       }
     };
 
@@ -38,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login }}>
+    <AuthContext.Provider value={{ user, login, loading }}>
       {children}
     </AuthContext.Provider>
   );
