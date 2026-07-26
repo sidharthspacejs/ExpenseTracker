@@ -1,5 +1,11 @@
+import Sidebar from "../../components/dashboard/Sidebar";
+
 const Dashboard = () => {
-  return <h1 className="text-3xl font-bold p-10">Admin Dashboard</h1>;
+  return (
+    <div>
+      <Sidebar />
+    </div>
+  );
 };
 
 export default Dashboard;
