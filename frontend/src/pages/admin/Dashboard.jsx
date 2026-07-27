@@ -1,10 +1,11 @@
-import Sidebar from "../../components/dashboard/Sidebar";
-
+import DashboardLayout from "../../layouts/DashboardLayout";
+import StatCard from "../../components/dashboard/StatCard";
 const Dashboard = () => {
   return (
-    <div>
-      <Sidebar />
-    </div>
+    <DashboardLayout>
+      <h1>Admin Dashboard</h1>
+      <StatCard />
+    </DashboardLayout>
   );
 };
 

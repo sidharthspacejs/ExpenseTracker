@@ -174,6 +174,8 @@ export const getCurrentUser = async (req, res) => {
         id: true,
         role: true,
         username: true,
+        designation: true,
+        name: true,
       },
     });
 

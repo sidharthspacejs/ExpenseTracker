@@ -6,37 +6,55 @@ import {
   ChartColumn,
   User,
   Settings,
+  LogOut,
 } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const menuItems = [
-    { name: "Dashboard", icon: LayoutDashboard },
-    { name: "Wallet", icon: Wallet },
-    { name: "Transactions", icon: ArrowLeftRight },
-    { name: "Analytics", icon: ChartColumn },
-    { name: "Profile", icon: User },
-    { name: "Settings", icon: Settings },
+    { name: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
+    { name: "Wallet", icon: Wallet, path: "/admin/wallet" },
+    { name: "Transactions", icon: ArrowLeftRight, path: "/admin/transactions" },
+    { name: "Analytics", icon: ChartColumn, path: "/admin/analytics" },
+    { name: "Profile", icon: User, path: "/admin/profile" },
+    { name: "Settings", icon: Settings, path: "/admin/settings" },
   ];
   return (
-    <aside className="w-64 h-screen flex flex-col bg-blue-800 border-r">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Expense Tracker</h1>
+    <aside className="group w-20 hover:w-64 h-screen flex flex-col bg-indigo-700 rounded-r-3xl transition-all duration-300">
+      <div className="flex items-center justify-center h-20">
+        <div className="mt-5 h-12 w-12 rounded-full bg-orange-400 flex items-center justify-center text-white font-bold text-xl">
+          ET
+        </div>
       </div>
-      <div className="flex flex-col gap-2 px-4">
+      <div className="flex flex-col gap-2 mt-10 px-3 ">
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
-            <div
+            <NavLink
               key={item.name}
-              className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100"
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center p-3 rounded-xl cursor-pointer transition-all duration-300 ${isActive ? "bg-white/20" : "hover:bg-white/10"}`
+              }
             >
-              <Icon size={20} />
-              <span>{item.name}</span>
-            </div>
+              <Icon size={22} className="text-white shrink-0" />
+
+              <span className="ml-4 text-white whitespace-nowrap opacity-0 w-0 overflow-hidden transition-all duration-300 group-hover:opacity-100 group-hover:w-auto">
+                {item.name}
+              </span>
+            </NavLink>
           );
         })}
       </div>
-      <div className="mt-auto p-4 border-t">Logout</div>
+      <div className="mt-auto p-3 ">
+        <div className="flex items-center p-3 rounded-xl cursor-pointer hover:bg-white/20">
+          <LogOut size={22} className="text-white shrink-0" />
+
+          <span className="ml-4 text-white whitespace-nowrap opacity-0 w-0 overflow-hidden transition-all duration-300 group-hover:opacity-100 group-hover:w-auto">
+            Logout
+          </span>
+        </div>
+      </div>
     </aside>
   );
 };
