@@ -4,7 +4,6 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <h1>Admin Dashboard</h1>
-      <StatCard />
     </DashboardLayout>
   );
 };
