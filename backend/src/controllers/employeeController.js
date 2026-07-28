@@ -12,12 +12,15 @@ export const createExpense = async (req, res) => {
 
   const { amount, description, category } = result.data;
 
+  const status = amount < 1000 ? "APPROVED" : "PENDING";
+
   try {
     const expense = await prisma.expense.create({
       data: {
         amount,
         description,
         category,
+        status,
         userId: req.user.id,
       },
       include: {
