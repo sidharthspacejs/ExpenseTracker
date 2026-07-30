@@ -1,9 +1,20 @@
 import DashboardLayout from "../../layouts/DashboardLayout";
-import StatCard from "../../components/dashboard/StatCard";
+import SummaryCards from "../../components/dashboard/SummaryCards";
+import { useDashboard } from "../../hooks/useDashboard";
+
 const Dashboard = () => {
+  const { dashboard, loading, error } = useDashboard();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Something went wrong.</div>;
+  }
   return (
     <DashboardLayout>
-      <h1>Admin Dashboard</h1>
+      <SummaryCards summary={dashboard.summary} />
     </DashboardLayout>
   );
 };

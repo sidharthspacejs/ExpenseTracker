@@ -1,6 +1,6 @@
 import React from "react";
 
-const SummaryCards = () => {
+const SummaryCards = ({ summary }) => {
   return <div></div>;
 };
 
