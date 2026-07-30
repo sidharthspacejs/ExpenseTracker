@@ -10,6 +10,8 @@ export const useDashboard = () => {
     try {
       const data = await getDashboardData();
 
+      console.log("Dashboard Data:", data);
+
       setDashboard(data);
     } catch (error) {
       setError(error);

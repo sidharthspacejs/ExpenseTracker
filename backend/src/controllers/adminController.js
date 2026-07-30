@@ -192,7 +192,7 @@ export const viewExpenseById = async (req, res) => {
 };
 
 export const dashboard = async (req, res) => {
-  const period = req.query.period || "today";
+  const period = req.query.period || "year";
 
   try {
     const endDate = new Date();
