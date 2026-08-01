@@ -2,6 +2,7 @@ import prisma from "../config/prisma.js";
 import { generateInvitationToken } from "../utils/generateInvitationToken.js";
 import { generateInvitationLink } from "../utils/generateInvitationLink.js";
 import { sendInvitationEmail } from "../services/emailService.js";
+import { generateExpenseTrend } from "../utils/generateExpenseTrend.js";
 
 export const createEmp = async (req, res) => {
   const { name, email, role, designation } = req.body;
@@ -192,11 +193,12 @@ export const viewExpenseById = async (req, res) => {
 };
 
 export const dashboard = async (req, res) => {
-  const period = req.query.period || "year";
+  const period = req.query.period || "today";
 
   try {
     const endDate = new Date();
     const startDate = new Date(endDate);
+    let expenseTrend = [];
 
     if (period === "today") {
       startDate.setHours(0, 0, 0, 0);
@@ -229,6 +231,7 @@ export const dashboard = async (req, res) => {
       pendingCount,
       approvedCount,
       rejectedCount,
+      expenses,
     ] = await Promise.all([
       prisma.user.count({
         where: {
@@ -286,12 +289,30 @@ export const dashboard = async (req, res) => {
           status: "REJECTED",
         },
       }),
+
+      prisma.expense.findMany({
+        where: {
+          ...dateFilter,
+          status: "APPROVED",
+        },
+
+        select: {
+          amount: true,
+          createdAt: true,
+        },
+
+        orderBy: {
+          createdAt: "asc",
+        },
+      }),
     ]);
 
     const totalExpense = stats._sum.amount || 0;
     const averageExpense = stats._avg.amount || 0;
     const highestExpense = stats._max.amount || 0;
     const numberOfExpenses = stats._count.id || 0;
+
+    const expenseTrend = generateExpenseTrend(expenses, period);
 
     return res.status(200).json({
       summary: {
@@ -309,6 +330,8 @@ export const dashboard = async (req, res) => {
       },
 
       categorySummary,
+
+      expenseTrend,
     });
   } catch (error) {
     console.log(error);
