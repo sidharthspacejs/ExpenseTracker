@@ -19,7 +19,7 @@ const Dashboard = () => {
       <SummaryCards summary={dashboard.summary} />
       <div className="grid grid-cols-3 gap-6 mt-6">
         <div className="col-span-2">
-          <ExpenseOverview />
+          <ExpenseOverview expenseTrend={dashboard.expenseTrend} />
         </div>
         <div className="col-span-1">
           <ApprovalStatus />

@@ -15,3 +15,16 @@ export const generateExpenseTrend = (expenses, period) => {
 
   return expenseTrend;
 };
+
+export const generateCumulativeTrend = (rawTrend) => {
+  let runningTotal = 0;
+
+  return rawTrend.map((point) => {
+    runningTotal += point.total;
+
+    return {
+      ...point,
+      total: runningTotal,
+    };
+  });
+};

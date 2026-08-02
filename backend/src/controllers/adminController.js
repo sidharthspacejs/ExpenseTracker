@@ -2,7 +2,10 @@ import prisma from "../config/prisma.js";
 import { generateInvitationToken } from "../utils/generateInvitationToken.js";
 import { generateInvitationLink } from "../utils/generateInvitationLink.js";
 import { sendInvitationEmail } from "../services/emailService.js";
-import { generateExpenseTrend } from "../utils/generateExpenseTrend.js";
+import {
+  generateExpenseTrend,
+  generateCumulativeTrend,
+} from "../utils/generateExpenseTrend.js";
 
 export const createEmp = async (req, res) => {
   const { name, email, role, designation } = req.body;
@@ -198,7 +201,6 @@ export const dashboard = async (req, res) => {
   try {
     const endDate = new Date();
     const startDate = new Date(endDate);
-    let expenseTrend = [];
 
     if (period === "today") {
       startDate.setHours(0, 0, 0, 0);
@@ -312,7 +314,12 @@ export const dashboard = async (req, res) => {
     const highestExpense = stats._max.amount || 0;
     const numberOfExpenses = stats._count.id || 0;
 
-    const expenseTrend = generateExpenseTrend(expenses, period);
+    const rawTrend = generateExpenseTrend(expenses, period);
+
+    console.log(rawTrend);
+
+    const expenseTrend =
+      period === "today" ? generateCumulativeTrend(rawTrend) : rawTrend;
 
     return res.status(200).json({
       summary: {
@@ -337,7 +344,7 @@ export const dashboard = async (req, res) => {
     console.log(error);
 
     return res.status(500).json({
-      message: "Internal Server Error",
+      message: "Internal Server Error occured",
     });
   }
 };
