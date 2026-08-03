@@ -22,7 +22,7 @@ const Dashboard = () => {
           <ExpenseOverview expenseTrend={dashboard.expenseTrend} />
         </div>
         <div className="col-span-1">
-          <ApprovalStatus />
+          <ApprovalStatus summary={dashboard.summary} />
         </div>
       </div>
     </DashboardLayout>

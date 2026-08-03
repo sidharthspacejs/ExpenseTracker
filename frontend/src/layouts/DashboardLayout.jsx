@@ -8,7 +8,7 @@ const DashboardLayout = ({ children }) => {
       <main className="flex-1 bg-gray-100 min-h-screen">
         <Navbar />
 
-        <div className="p-8">{children}</div>
+        <div className="p-6">{children}</div>
       </main>
     </div>
   );
