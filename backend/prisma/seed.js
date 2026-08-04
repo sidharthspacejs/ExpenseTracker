@@ -1,27 +1,28 @@
-import prisma from "../src/config/prisma.js"
-import bcrypt from "bcryptjs"
+import prisma from "../src/config/prisma.js";
+import bcrypt from "bcryptjs";
 
 async function main() {
-    const hashedPassword = await bcrypt.hash("123456",10);
-    await prisma.user.create({
-        data: {
-            email: "admin@gmail.com",
-            password: hashedPassword,
-            name: "Admin",
-            username: "Admin123",
+  const hashedPassword = await bcrypt.hash("123456", 10);
+  await prisma.user.upsert({
+    data: {
+      email: "admin@gmail.com",
+      password: hashedPassword,
+      name: "Admin",
+      username: "Admin123",
+      status: "ACTIVE",
 
-            age: 30,
-            designation : "Administrator",
+      age: 30,
+      designation: "Administrator",
 
-            spendingLimit: 0,
+      spendingLimit: 0,
 
-            role: "ADMIN"
-        }
-    })
+      role: "ADMIN",
+    },
+  });
 
-    console.log("Admin created");
+  console.log("Admin created");
 }
 
 main()
-   .catch((e) => console.error(e))
-   .finally(async() => await prisma.$disconnect());
+  .catch((e) => console.error(e))
+  .finally(async () => await prisma.$disconnect());

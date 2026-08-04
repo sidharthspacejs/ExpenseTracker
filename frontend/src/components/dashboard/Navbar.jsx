@@ -2,12 +2,12 @@ import React from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Bell } from "lucide-react";
 
-const Navbar = () => {
+const Navbar = ({ name }) => {
   const { user } = useAuth();
   return (
     <header className="h-20 bg-white  flex items-center justify-between px-8">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-800">{name}</h1>
         <p className="text-gray-500">Welcome back!</p>
       </div>
 

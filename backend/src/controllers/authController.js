@@ -145,7 +145,7 @@ export const accountSetup = async (req, res) => {
       data: {
         username: username,
         password: await bcrypt.hash(password, 10),
-        isActive: true,
+        status: "ACTIVE",
         invitationToken: null,
         invitationExpiry: null,
       },

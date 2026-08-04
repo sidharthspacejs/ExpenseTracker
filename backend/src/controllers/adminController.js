@@ -41,7 +41,6 @@ export const createEmp = async (req, res) => {
         designation: designation,
         invitationToken: invitationToken,
         invitationExpiry: invitationExpiry,
-        isActive: false,
       },
     });
 

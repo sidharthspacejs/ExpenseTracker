@@ -22,6 +22,12 @@ enum ExpenseStatus {
   REJECTED
 }
 
+enum Status {
+  ACTIVE 
+  PENDING 
+  TERMINATED
+}
+
 model User {
   id Int @id @default(autoincrement())
 
@@ -37,7 +43,7 @@ model User {
 
   role Role @default(EMPLOYEE)
 
-  isActive Boolean @default(false)
+  status Status @default(PENDING)
 
   invitationToken String? @unique
   invitationExpiry DateTime?

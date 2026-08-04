@@ -1,12 +1,12 @@
 import Sidebar from "../components/dashboard/Sidebar";
 import Navbar from "../components/dashboard/Navbar";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ name, children }) => {
   return (
     <div className="flex">
       <Sidebar />
       <main className="flex-1 bg-gray-100 min-h-screen">
-        <Navbar />
+        <Navbar name={name} />
 
         <div className="p-6">{children}</div>
       </main>

@@ -15,7 +15,7 @@ const Dashboard = () => {
     return <div>Something went wrong.</div>;
   }
   return (
-    <DashboardLayout>
+    <DashboardLayout name={"Dashboard"}>
       <SummaryCards summary={dashboard.summary} />
       <div className="grid grid-cols-3 gap-6 mt-6">
         <div className="col-span-2">

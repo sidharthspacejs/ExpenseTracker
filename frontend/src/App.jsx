@@ -3,6 +3,7 @@ import Login from "./pages/auth/Login.jsx";
 import { Routes, Route } from "react-router-dom";
 
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
+import EmployeeManage from "./pages/admin/EmployeeManage.jsx";
 import EmployeeDashboard from "./pages/employee/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
@@ -18,6 +19,14 @@ function App() {
         element={
           <ProtectedRoute allowedRole="ADMIN">
             <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/wallet"
+        element={
+          <ProtectedRoute allowedRole="ADMIN">
+            <EmployeeManage />
           </ProtectedRoute>
         }
       />
