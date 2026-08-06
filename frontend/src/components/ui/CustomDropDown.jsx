@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 import React from "react";
 import { useState } from "react";
 
-const CustomDropDown = ({ icon, options, value, onChange, placeholder }) => {
+const CustomDropDown = ({ icon, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="relative">
@@ -20,7 +20,20 @@ const CustomDropDown = ({ icon, options, value, onChange, placeholder }) => {
         />
       </button>
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full h-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50"></div>
+        <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
+          {options.map((option) => (
+            <button
+              key={option}
+              onClick={() => {
+                onChange(option);
+                setIsOpen(false);
+              }}
+              className="w-full text-left px-4 py-3 text-sm hover:bg-gray-100 transition-colors"
+            >
+              {option}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );

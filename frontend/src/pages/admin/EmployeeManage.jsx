@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import Toolbar from "../../components/ui/Toolbar";
 
 const EmployeeManage = () => {
+  const statusOptions = ["ALL", "ACTIVE", "PENDING", "TERMINATED"];
+  const [selectedStatus, setSelectedStatus] = useState("ALL");
   return (
     <DashboardLayout name={"Employee Manage"}>
-      <Toolbar />
+      <Toolbar
+        statusOptions={statusOptions}
+        selectedStatus={selectedStatus}
+        onStatusChange={setSelectedStatus}
+      />
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-3">
         <table className="w-full ">
           <thead className="bg-gray-50 border-b border-gray-200">
