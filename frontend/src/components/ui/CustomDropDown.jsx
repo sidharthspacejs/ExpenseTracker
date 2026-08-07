@@ -1,18 +1,36 @@
 import { ChevronDown } from "lucide-react";
 import React from "react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const CustomDropDown = ({ icon, options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropDownRef = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div ref={dropDownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between gap-3 w-40 h-12 rounded-xl border border-gray-300 bg-white px-4 shadow-sm hover:border-indigo-400 transition"
       >
         <div className="flex items-center gap-3">
           {icon}
-          <span className="text-sm font-medium text-gray-700">{value}</span>
+          <span className="text-xs font-medium text-gray-700">{value}</span>
         </div>
         <ChevronDown
           size={18}
@@ -20,7 +38,7 @@ const CustomDropDown = ({ icon, options, value, onChange }) => {
         />
       </button>
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
+        <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 text-xs font-medium text-gray-700">
           {options.map((option) => (
             <button
               key={option}

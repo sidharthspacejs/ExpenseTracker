@@ -1,7 +1,7 @@
 import CustomDropDown from "./CustomDropDown";
 import { Filter } from "lucide-react";
 
-const Toolbar = ({ statusOptions, selectedStatus, setSelectedStatus }) => {
+const Toolbar = ({ statusOptions, selectedStatus, onStatusChange }) => {
   return (
     <div className="flex items-center justify-between mb-10">
       <button className="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-sm">
@@ -17,7 +17,7 @@ const Toolbar = ({ statusOptions, selectedStatus, setSelectedStatus }) => {
           icon={<Filter size={18} />}
           options={statusOptions}
           value={selectedStatus}
-          onChange={setSelectedStatus}
+          onChange={onStatusChange}
         />
       </div>
     </div>
