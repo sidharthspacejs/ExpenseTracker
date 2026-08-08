@@ -9,3 +9,11 @@ export const getDashboardData = async (period) => {
 
   return response.data;
 };
+
+export const getAllEmployees = async (status) => {
+  const response = await api.get("/admin/view-employees", {
+    params: {
+      status,
+    },
+  });
+};
