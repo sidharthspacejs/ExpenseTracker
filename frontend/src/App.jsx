@@ -6,6 +6,7 @@ import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import EmployeeManage from "./pages/admin/EmployeeManage.jsx";
 import EmployeeDashboard from "./pages/employee/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Transactions from "./pages/admin/Transactions.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -23,10 +24,18 @@ function App() {
         }
       />
       <Route
-        path="/admin/wallet"
+        path="/admin/employee-manage"
         element={
           <ProtectedRoute allowedRole="ADMIN">
             <EmployeeManage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/transactions"
+        element={
+          <ProtectedRoute allowedRole="ADMIN">
+            <Transactions />
           </ProtectedRoute>
         }
       />

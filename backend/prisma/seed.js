@@ -1,21 +1,33 @@
 import prisma from "../src/config/prisma.js";
 import bcrypt from "bcryptjs";
+import "dotenv/config";
 
 async function main() {
-  const hashedPassword = await bcrypt.hash("123456", 10);
+  const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASS, 10);
   await prisma.user.upsert({
-    data: {
-      email: "admin@gmail.com",
+    where: {
+      email: process.env.ADMIN_EMAIL,
+    },
+    update: {
       password: hashedPassword,
       name: "Admin",
-      username: "Admin123",
+      username: process.env.ADMIN_USERNAME,
       status: "ACTIVE",
-
       age: 30,
       designation: "Administrator",
-
       spendingLimit: 0,
+      role: "ADMIN",
+    },
 
+    create: {
+      email: process.env.ADMIN_EMAIL,
+      password: hashedPassword,
+      name: "Admin",
+      username: process.env.ADMIN_USERNAME,
+      status: "ACTIVE",
+      age: 30,
+      designation: "Administrator",
+      spendingLimit: 0,
       role: "ADMIN",
     },
   });

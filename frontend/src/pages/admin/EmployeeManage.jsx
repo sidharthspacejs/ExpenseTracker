@@ -8,6 +8,7 @@ const EmployeeManage = () => {
   return (
     <DashboardLayout name={"Employee Manage"}>
       <Toolbar
+        buttonElement={"+ Add Employee"}
         statusOptions={statusOptions}
         selectedStatus={selectedStatus}
         onStatusChange={setSelectedStatus}

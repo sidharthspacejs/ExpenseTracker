@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 const Sidebar = () => {
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
-    { name: "Wallet", icon: Wallet, path: "/admin/wallet" },
+    { name: "Employee Manage", icon: Wallet, path: "/admin/employee-manage" },
     { name: "Transactions", icon: ArrowLeftRight, path: "/admin/transactions" },
     { name: "Analytics", icon: ChartColumn, path: "/admin/analytics" },
     { name: "Profile", icon: User, path: "/admin/profile" },

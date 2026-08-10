@@ -6,10 +6,11 @@ import adminRoutes from "../src/routes/adminRoutes.js";
 import employeeRoutes from "../src/routes/employeeRoutes.js";
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
   }),
 );
 
@@ -24,6 +25,6 @@ app.get("/", (req, res) => {
   res.status(200).send("API Working succesfully");
 });
 
-app.listen(5000, () => {
-  console.log("Server started running on PORT: 5000");
+app.listen(PORT, () => {
+  console.log(`Server started running on PORT: ${PORT}`);
 });

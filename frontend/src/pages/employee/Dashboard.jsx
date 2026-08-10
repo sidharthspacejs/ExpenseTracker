@@ -1,5 +1,7 @@
+import DashboardLayout from "../../layouts/DashboardLayout";
+
 const Dashboard = () => {
-  return <h1 className="text-3xl font-bold p-10">Employee Dashboard</h1>;
+  return <DashboardLayout></DashboardLayout>;
 };
 
 export default Dashboard;
