@@ -22,7 +22,7 @@ const Navbar = ({ name }) => {
             <p className="text-xs text-gray-500">{user?.designation}</p>
           </div>
           <div className="w-10 h-10 rounded-full text-white bg-indigo-600 flex items-center justify-center">
-            {user?.name.charAt(0).toUpperCase()}
+            {user?.name?.charAt(0).toUpperCase() || ""}
           </div>
         </div>
       </div>

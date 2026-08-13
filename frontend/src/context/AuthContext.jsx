@@ -25,6 +25,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const loadUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        isLoading(false);
+        return;
+      }
       try {
         const user = await getCurrentUser();
 
