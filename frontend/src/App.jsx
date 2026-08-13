@@ -7,13 +7,15 @@ import EmployeeManage from "./pages/admin/EmployeeManage.jsx";
 import EmployeeDashboard from "./pages/employee/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Transactions from "./pages/admin/Transactions.jsx";
+import HomeRedirect from "./components/HomeRedirect.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<HomeRedirect />} />
+      <Route path="/login" element={<Login />} />
 
       <Route
         path="/admin/dashboard"

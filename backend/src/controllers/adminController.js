@@ -102,9 +102,12 @@ export const viewAllEmployees = async (req, res) => {
       select: {
         id: true,
         name: true,
+        email: true,
+        spendingLimit: true,
         username: true,
         role: true,
         designation: true,
+        status: true,
         expenses: {
           select: {
             amount: true,
@@ -121,9 +124,12 @@ export const viewAllEmployees = async (req, res) => {
       return {
         id: employee.id,
         name: employee.name,
+        email: employee.email,
         username: employee.username,
         role: employee.role,
         designation: employee.designation,
+        status: employee.status,
+        limit: employee.spendingLimit,
         expenseCount: employee.expenses.length,
         totalExpense,
       };

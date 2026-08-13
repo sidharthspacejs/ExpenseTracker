@@ -16,4 +16,6 @@ export const getAllEmployees = async (status) => {
       status,
     },
   });
+
+  return response.data;
 };
