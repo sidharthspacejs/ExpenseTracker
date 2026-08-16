@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import Toolbar from "../../components/ui/Toolbar";
 import useEmployee from "../../hooks/useEmployee";
+import AddEmployeeForm from "../../components/admin/AddEmployeeForm";
+import CustomCreationButton from "../../components/ui/CustomCreationButton";
 
 const EmployeeManage = () => {
   const statusOptions = ["ALL", "ACTIVE", "PENDING", "TERMINATED"];
   const [selectedStatus, setSelectedStatus] = useState("ALL");
+  const [showEmployeeForm, setShowEmployeeForm] = useState(false);
   const { employees, loading, error } = useEmployee();
 
   if (loading) {
@@ -18,11 +21,15 @@ const EmployeeManage = () => {
   return (
     <DashboardLayout name={"Employee Manage"}>
       <Toolbar
-        buttonElement={"+ Add Employee"}
         statusOptions={statusOptions}
         selectedStatus={selectedStatus}
         onStatusChange={setSelectedStatus}
-      />
+      >
+        <CustomCreationButton
+          onButtonClick={() => setShowEmployeeForm(true)}
+          buttonElement={"+ Add Employee"}
+        />
+      </Toolbar>
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-3">
         <table className="w-full ">
           <thead className="bg-gray-50 border-b border-gray-200">
@@ -49,7 +56,10 @@ const EmployeeManage = () => {
           </thead>
           <tbody>
             {employees.map((employee) => (
-              <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+              <tr
+                key={employee.id}
+                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+              >
                 <td className="px-6 py-4">
                   <div>
                     <p className="font-semibold text-gray-900 ">
@@ -87,6 +97,9 @@ const EmployeeManage = () => {
           </tbody>
         </table>
       </div>
+      {showEmployeeForm && (
+        <AddEmployeeForm onClose={() => setShowEmployeeForm(false)} />
+      )}
     </DashboardLayout>
   );
 };
