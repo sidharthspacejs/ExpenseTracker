@@ -19,3 +19,8 @@ export const getAllEmployees = async (status) => {
 
   return response.data;
 };
+
+export const createEmployee = async (employeeData) => {
+  const response = await api.post("/admin/create-employee", employeeData);
+  return response.data;
+};

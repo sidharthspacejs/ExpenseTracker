@@ -8,10 +8,10 @@ import {
 } from "../utils/generateExpenseTrend.js";
 
 export const createEmp = async (req, res) => {
-  const { name, email, role, designation } = req.body;
+  const { name, email, designation } = req.body;
 
   try {
-    if (!name || !email || !role || !designation) {
+    if (!name || !email || !designation) {
       return res.status(400).json({
         message: "All fields are required",
       });
