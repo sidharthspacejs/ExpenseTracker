@@ -28,6 +28,7 @@ const useEmployee = () => {
     employees,
     loading,
     error,
+    refetch: fetchEmployees,
   };
 };
 

@@ -37,7 +37,6 @@ export const createEmp = async (req, res) => {
       data: {
         name: name,
         email: email,
-        role: role.toUpperCase(),
         designation: designation,
         invitationToken: invitationToken,
         invitationExpiry: invitationExpiry,

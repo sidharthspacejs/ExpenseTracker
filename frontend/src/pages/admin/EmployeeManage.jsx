@@ -9,7 +9,7 @@ const EmployeeManage = () => {
   const statusOptions = ["ALL", "ACTIVE", "PENDING", "TERMINATED"];
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [showEmployeeForm, setShowEmployeeForm] = useState(false);
-  const { employees, loading, error } = useEmployee();
+  const { employees, loading, error, refetch } = useEmployee();
 
   if (loading) {
     return <div>Loading...</div>;
@@ -98,7 +98,10 @@ const EmployeeManage = () => {
         </table>
       </div>
       {showEmployeeForm && (
-        <AddEmployeeForm onClose={() => setShowEmployeeForm(false)} />
+        <AddEmployeeForm
+          onEmployeeCreated={refetch}
+          onClose={() => setShowEmployeeForm(false)}
+        />
       )}
     </DashboardLayout>
   );

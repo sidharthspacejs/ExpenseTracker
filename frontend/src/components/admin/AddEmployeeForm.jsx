@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Modal from "../ui/Modal";
+import { createEmployee } from "../../api/adminApi";
 
-const AddEmployeeForm = ({ onClose }) => {
+const AddEmployeeForm = ({ onClose, onEmployeeCreated }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,14 +18,18 @@ const AddEmployeeForm = ({ onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    try {
+      await createEmployee(formData);
 
-    // API call will be added here later
+      await onEmployeeCreated();
 
-    onClose();
+      onClose();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
